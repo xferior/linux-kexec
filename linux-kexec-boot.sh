@@ -128,12 +128,12 @@ else
   case "$CHOICE" in
     ''|*[!0-9]*)
       printf "Please enter a valid line number.\n"
-      CHOICE=""
+      exit 1
       ;;
     *)
       if [ "$CHOICE" -lt 1 ] || [ "$CHOICE" -gt "$NUM_KERNELS" ]; then
         printf "Please enter a number from 1 to %d.\n" "$NUM_KERNELS"
-        CHOICE=""
+        exit 1
       else
         # Get the selected kernel
         SELECTED_KERNEL=$(echo "$KERNELS" | sed -n "${CHOICE}p")
