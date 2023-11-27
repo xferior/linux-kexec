@@ -5,6 +5,12 @@
 # Useage: linux-kexec-boot.sh (follow prompts)
 #         linux-kexec-boot.sh --latest (for use with patch automation)
 
+# Check that script is being run as root
+if [ "$(id -u)" -ne 0 ]; then
+  printf "This script must be run as root\n" >&2
+  exit 1
+fi
+
 # Function to find the initram image for a kernel
 find_initrd() {
   KERNEL_VERSION=$(basename "$1" | sed -e 's/vmlinuz-//')
@@ -58,6 +64,21 @@ if [ "$1" = "--latest" ]; then
   exit 0
 fi
 
+# Check for --current argument
+if [ "$1" = "--current" ]; then
+  CURRENT_KERNEL=$(find /boot -name "vmlinuz-$(uname -r)")
+
+  if [ -z "$CURRENT_KERNEL" ]; then
+    printf "No matching kernel file found for the current running kernel.\n" >&2
+    exit 1
+  fi
+
+  printf "Current running kernel is: %s\n" "$(basename "$CURRENT_KERNEL" | sed -e 's/vmlinuz-//')"
+  printf "Booting to current running kernel...\n"
+  kexec_kernel "$CURRENT_KERNEL"
+  exit 0
+fi
+
 # Check if kexec-tools are installed
 if ! command -v kexec >/dev/null 2>&1; then
   printf "kexec is not installed. " >&2
@@ -72,12 +93,6 @@ if ! command -v kexec >/dev/null 2>&1; then
   else
     printf "Please install kexec-tools using your package manager.\n" >&2
   fi
-  exit 1
-fi
-
-# Check that script is being run as root
-if [ "$(id -u)" -ne 0 ]; then
-  printf "This script must be run as root\n" >&2
   exit 1
 fi
 
