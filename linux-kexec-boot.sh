@@ -127,12 +127,12 @@ else
   # Check if the choice is non-empty, numerical, and within the valid range
   case "$CHOICE" in
     ''|*[!0-9]*)
-      printf "Invalid selection. Please enter a numerical value.\n"
+      printf "Please enter a valid line number.\n"
       CHOICE=""
       ;;
     *)
       if [ "$CHOICE" -lt 1 ] || [ "$CHOICE" -gt "$NUM_KERNELS" ]; then
-        printf "Invalid selection. Please enter a number from 1 to %d.\n" "$NUM_KERNELS"
+        printf "Please enter a number from 1 to %d.\n" "$NUM_KERNELS"
         CHOICE=""
       else
         # Get the selected kernel
