@@ -83,7 +83,7 @@ fi
 if ! command -v kexec >/dev/null 2>&1; then
   printf "kexec is not installed. " >&2
   if command -v apt-get >/dev/null 2>&1; then
-    printf "Try installing it using: sudo apt-get install kexec-tools\n" >&2
+    printf "Try installing it using: sudo DEBIAN_FRONTEND=noninteractive apt-get install kexec-tools\n" >&2
   elif command -v yum >/dev/null 2>&1; then
     printf "Try installing it using: sudo yum install kexec-tools\n" >&2
   elif command -v dnf >/dev/null 2>&1; then
