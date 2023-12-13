@@ -4,6 +4,7 @@
 # Description: Switch between installed Linux kernels using kexec
 # Useage: linux-kexec-boot.sh (follow prompts)
 #         linux-kexec-boot.sh --latest (for use with patch automation)
+#         linux-kexec-boot.sh --current (warm kexec reboot)
 
 # Check that script is being run as root
 if [ "$(id -u)" -ne 0 ]; then
@@ -51,13 +52,13 @@ kexec_kernel() {
 # Check for --latest argument 
 if [ "$1" = "--latest" ]; then
   # Find the latest kernel based on version sort
-  LATEST_KERNEL=$(ls /boot/vmlinuz-* | grep -v 'rescue' | sort -V | tail -n 1)
+  LATEST_KERNEL=$(find /boot -name "vmlinuz-*" ! -name "*rescue*" -type f -print | grep -E "^/boot/vmlinuz-[^/]+$" | sort -V | tail -n 1)
   
   if [ -z "$LATEST_KERNEL" ]; then
     printf "No kernels found in /boot.\n" >&2
     exit 1
   fi
-
+  
   printf "The latest kernel found is: %s\n" "$(basename "$LATEST_KERNEL" | sed -e 's/vmlinuz-//')"
   printf "Booting to latest kernel...\n"
   kexec_kernel "$LATEST_KERNEL"
@@ -97,7 +98,7 @@ if ! command -v kexec >/dev/null 2>&1; then
 fi
 
 # List the vmlinuz files in /boot, excluding rescue entries
-KERNELS=$(ls /boot/vmlinuz-* 2>/dev/null | grep -v 'rescue' | sort -V)
+KERNELS=$(find /boot -name "vmlinuz-*" ! -name "*rescue*" -type f -print | grep -E "^/boot/vmlinuz-[^/]+$" | xargs ls -1 | sort -V)
 
 # Count number of kernels found
 NUM_KERNELS=$(echo "$KERNELS" | wc -l | tr -d '[:space:]')
