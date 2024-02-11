@@ -12,6 +12,23 @@ if [ "$(id -u)" -ne 0 ]; then
   exit 1
 fi
 
+# Check if kexec-tools are installed
+if ! command -v kexec >/dev/null 2>&1; then
+  printf "kexec is not installed. " >&2
+  if command -v apt-get >/dev/null 2>&1; then
+    printf "Try installing it using: sudo DEBIAN_FRONTEND=noninteractive apt-get install kexec-tools\n" >&2
+  elif command -v yum >/dev/null 2>&1; then
+    printf "Try installing it using: sudo yum -y install kexec-tools\n" >&2
+  elif command -v dnf >/dev/null 2>&1; then
+    printf "Try installing it using: sudo dnf -y install kexec-tools\n" >&2
+  elif command -v pacman >/dev/null 2>&1; then
+    printf "Try installing it using: sudo pacman -S kexec-tools\n" >&2
+  else
+    printf "Please install kexec-tools using your package manager.\n" >&2
+  fi
+  exit 1
+fi
+
 # Function to find the initram image for a kernel
 find_initrd() {
   KERNEL_VERSION=$(basename "$1" | sed -e 's/vmlinuz-//')
@@ -78,23 +95,6 @@ if [ "$1" = "--current" ]; then
   printf "Booting to current running kernel...\n"
   kexec_kernel "$CURRENT_KERNEL"
   exit 0
-fi
-
-# Check if kexec-tools are installed
-if ! command -v kexec >/dev/null 2>&1; then
-  printf "kexec is not installed. " >&2
-  if command -v apt-get >/dev/null 2>&1; then
-    printf "Try installing it using: sudo DEBIAN_FRONTEND=noninteractive apt-get install kexec-tools\n" >&2
-  elif command -v yum >/dev/null 2>&1; then
-    printf "Try installing it using: sudo yum -y install kexec-tools\n" >&2
-  elif command -v dnf >/dev/null 2>&1; then
-    printf "Try installing it using: sudo dnf -y install kexec-tools\n" >&2
-  elif command -v pacman >/dev/null 2>&1; then
-    printf "Try installing it using: sudo pacman -S kexec-tools\n" >&2
-  else
-    printf "Please install kexec-tools using your package manager.\n" >&2
-  fi
-  exit 1
 fi
 
 # List the vmlinuz files in /boot, excluding rescue entries
