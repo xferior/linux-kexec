@@ -2,7 +2,7 @@
 
 This script provides an easy way for users to switch between installed Linux kernels using `kexec`, allowing a kernel to be loaded without a full system reboot.
 
-![xferior_linux-kexec-boot](https://github.com/xferior/linux-kexec/assets/149968394/12a8d7d8-3800-45bb-bdb8-f506a29cb656)
+![xferior_linux-kexec-boot](https://github.com/xferior/linux-kexec/assets/149968394/6ff3da7b-af92-46ef-a3bb-973f48bf48b7)
 
 ## Features
 
